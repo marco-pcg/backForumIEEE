@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(uuid())
+  email     String      @unique
+  username  String      @unique
+  password  String
+  name      String
+  role      String      @default("user")
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  questions Question[]
+  replies   Reply[]
+}
+
+model Question {
+  id          String     @id @default(uuid())
+  title       String
+  content     String
+  solved      Boolean    @default(false)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id])
+
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id])
+
+  replies     Reply[]
+}
+
+model Reply {
+  id          String     @id @default(uuid())
+  content     String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  authorId    String
+  author      User       @relation(fields: [authorId], references: [id])
+
+  questionId  String
+  question    Question   @relation(fields: [questionId], references: [id])
+}
+
+model Category {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  questions Question[]
+}
+
+model QuestionsLikes {
+  id          String   @id @default(uuid())
+  userId      String
+  questionId  String
+
+  @@unique([userId, questionId])
+}
+
+model RepliesLikes {
+  id        String   @id @default(uuid())
+  userId    String
+  replyId   String
+
+  @@unique([userId, replyId])
+}

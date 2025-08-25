@@ -1,49 +1,48 @@
-import db from '../db/knex.ts'
-import { v4 } from 'uuid'
+import { prisma } from '../db/prisma.ts'
 import type { UserProps, UserPropsWithoutId } from '../models/User.ts'
 
 export default class UserRepository {
 
-    static TABLE_NAME = 'users'
-
-    static create(user: UserPropsWithoutId) {
+    static async create(user: UserPropsWithoutId) {
         
-        const id = v4()
+        const created = await prisma.user.create({
+            data: user
+        })
 
-        return db(this.TABLE_NAME)
-            .insert({ id, ...user})
+        return created
     }
 
-    static read(){
-        return db(this.TABLE_NAME)
-            .select(
-                'id',
-                'name',
-                'username',
-                'email',
-            )
+    static async read(){
+        const allUsers = await prisma.user.findMany()
+
+        return allUsers
     }
 
-    static readById(id: string){
-        return db(this.TABLE_NAME)
-            .where({ id })
+    static async readById(id: string){
+        const user = await prisma.user.findFirst({
+            where: { id }
+        })
 
+        return user
     }
 
-    static update(id: string, user: Partial<UserProps>){
+    static async update(id: string, user: Partial<UserProps>){
 
-        return db(this.TABLE_NAME)
-            .where({ id })
-            .update({ ...user })
-            .then(count => count > 0)
+        const updated = await prisma.user.update({
+            where: { id },
+            data: user
+        })
+
+        return updated
     }
 
-    static delete(id: string){
+    static async delete(id: string){
 
-        return db(this.TABLE_NAME)
-            .where({ id })
-            .del()
-            .then(count => count > 0)
+        const deleted = await prisma.user.delete({
+            where: { id }
+        })
+        
+        return deleted
     }
 
 }

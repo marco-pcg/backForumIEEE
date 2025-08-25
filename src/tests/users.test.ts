@@ -19,6 +19,19 @@ describe('User Unit Tests Workflow', () => {
             role: 'user'
         }
 
+        try{
+            const _user = new User(mockedProps)
+
+            const user = await UserService.createUser(_user)
+
+        }catch(err: any){
+
+            assert.strictEqual(err.message, 'there is missing information')
+        }
+
+    })
+
+
         const _user = new User(mockedProps)
 
         const user = await UserService.createUser(_user)

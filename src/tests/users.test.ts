@@ -29,22 +29,44 @@ describe('User Unit Tests Workflow', () => {
 
     })
 
-    it('should create user with provided data', async () => {
+    it('should not register user with invalid e-mail', async () =>{
 
         const mockedProps: UserPropsWithoutId = {
             name: 'abc',
             password: '123',
-            username: 'abc',
+            username: 'abc2',
+            email: 'avcgassas',
+            role: 'user'
+        }
+
+        try{
+            const _user = new User(mockedProps)
+            const user = await UserService.createUser(_user)
+
+        }catch(err: any){
+
+            assert.strictEqual(err.message, 'invalid email address')
+        }
+    })
+
+    it('should register user with valid e-mail', async () =>{
+
+        const mockedProps: UserPropsWithoutId = {
+            name: 'abc',
+            password: '123',
+            username: 'abc2',
             email: 'abc@gmail.com',
             role: 'user'
         }
 
+    
         const _user = new User(mockedProps)
-
         const user = await UserService.createUser(_user)
 
         assert.strictEqual(user.name, mockedProps.name)
-
+        assert.strictEqual(user.email, mockedProps.email)
+        // password IS encrypted
+        assert.ok(user.password.length > 30)
     })
 
 })

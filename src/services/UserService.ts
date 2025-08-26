@@ -1,3 +1,4 @@
+import bcrypt from 'bcrypt'
 import type { User } from "../models/User.ts";
 import UserRepository from "../repositories/UserRepository.ts";
 
@@ -5,6 +6,22 @@ export default class UserService {
 
 
     static async createUser(user: User) {
+
+        const {
+            name,
+            email,
+            password,
+            username
+        } = user
+
+        if(!name || !email || !password || !username){
+            throw new Error('there is missing information')
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            throw new Error('invalid email address');
+        }
 
         const saltRounds = 12
         const hashedPassword = await bcrypt.hash(user.password, saltRounds)

@@ -6,6 +6,10 @@ export default class UserService {
 
     static async createUser(user: User) {
 
+        const saltRounds = 12
+        const hashedPassword = await bcrypt.hash(user.password, saltRounds)
+
+        user.password = hashedPassword
         const created = await UserRepository.create(user)
 
         return created

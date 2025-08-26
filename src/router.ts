@@ -1,17 +1,12 @@
-import { Router, type Application, type Request, type Response } from "express";
+import { Router } from "express";
+import UserController from "./controllers/UserController.ts";
+import userRouter from './routes/user.ts'
 
 const router = Router()
 
-router.get('/users', (req: Request, res: Response) => {
-    res.send({msg: 'List of users'})
-})
+router.post('login', UserController.login)
+router.post('register', UserController.register)
 
-router.post('login', (req: Request, res: Response) => {
-    throw new Error('Not implemented')
-})
-
-router.post('register', (req: Request, res: Response) => {
-    throw new Error('Not implemented')
-})
+router.use('/users', userRouter)
 
 export default router

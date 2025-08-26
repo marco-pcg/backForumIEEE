@@ -21,16 +21,19 @@ describe('API Workflow', () => {
 
     after((done: any) => _server.close(done))
 
-    it('should receive error', async () => {
+    it('should return empty array of users', async () => {
 
-        const request = await fetch(`${BASE_URL}/api/users`, {
-            method: 'GET'
-        })
-        const response = await request.json()
+        const res = await fetch(`${BASE_URL}/api/users`)
 
-        assert.deepStrictEqual(response, { msg: 'blabla' })
-        assert.strictEqual(request.status, 200)
+        assert.strictEqual(res.status, 200)
+
+        const users = await res.json()
+
+        assert.ok(Array.isArray(users))
+        assert.strictEqual(users.length, 0)
+
     })
 
+    
 
 })

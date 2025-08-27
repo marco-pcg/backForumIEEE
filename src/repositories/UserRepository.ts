@@ -12,8 +12,8 @@ export default class UserRepository {
         return created
     }
 
-    static async read(){
-        const allUsers = await prisma.user.findMany()
+    static async read(where?: {}){
+        const allUsers = await prisma.user.findMany(where)
 
         return allUsers
     }

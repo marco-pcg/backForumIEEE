@@ -23,14 +23,36 @@ export default class UserService {
             throw new Error('invalid email address');
         }
 
-        const saltRounds = 12
-        const hashedPassword = await bcrypt.hash(user.password, saltRounds)
+        const hashedPassword = await this.hashPassword(user.password)
 
         user.password = hashedPassword
         const created = await UserRepository.create(user)
 
         return created
     }
+
+    private static async hashPassword(password: string){
+        const saltRounds = 12
+        const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+        return hashedPassword
+    }
+
+    static async login(email: string, password: string){
+        const hashedPassword = await this.hashPassword(password)
+
+        const user = await UserRepository.read({
+            email,
+            hashedPassword
+        })
+
+        if(user){
+            return user
+        }
+
+        throw new Error('invalid e-mail address')
+    }
+
 
     static async readUsers(){
 

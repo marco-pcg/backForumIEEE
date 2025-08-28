@@ -101,11 +101,42 @@ export default class UserService {
 
     }
 
-    static async deleteUser(id: string){
+    static async deleteUser({id, email}: Prisma.UserWhereUniqueInput){
 
-        const deleted = await UserRepository.delete(id)
+        if(!id && !email){
+            throw new CustomValidationError('an id or email must be provided to delete a user')
+        }
 
-        return deleted
+        try{
+
+            let deleted;
+
+            if (id) {
+                deleted = await UserRepository.delete({ id: id! });
+                
+            } else {
+                deleted = await UserRepository.delete({ email: email! });
+            }
+
+            return deleted
+
+        }catch(err: Error | any){
+
+            if(err instanceof Prisma.PrismaClientValidationError){
+                throw new CustomValidationError('invalid id or email provided')
+
+            }else if(err instanceof Prisma.PrismaClientKnownRequestError){
+                throw new CustomValidationError('no user found')
+
+            }else if(err instanceof Prisma.PrismaClientUnknownRequestError){
+                throw new CustomValidationError('no user found')
+                                
+            }else if(err instanceof CustomValidationError){
+                throw err
+            }
+
+            throw err
+        }
     }
 
 

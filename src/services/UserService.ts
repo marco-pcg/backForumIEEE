@@ -50,11 +50,6 @@ export default class UserService {
 
             const hashedPassword = await this.hashPassword(password)
 
-            if(!email || !password){
-                throw new CustomValidationError('email and password are required')
-            }
-
-
             const user = await UserRepository.read({
                 email,
                 password: hashedPassword
@@ -93,9 +88,13 @@ export default class UserService {
         return user
     }
 
-    static async updateUser(id: string, user: Partial<User>){
+    static async updateUser({id, email}: Prisma.UserWhereUniqueInput, user: Partial<User>){
 
-        const updated = await UserRepository.update(id, user)
+        const updated = await UserRepository.update({ 
+                id: id ? id : '', 
+                email: email ? email : '',
+            }, 
+            user)
 
         return updated
 

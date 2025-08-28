@@ -13,7 +13,7 @@ export default class UserRepository {
         return created
     }
 
-    static async read(props?: Partial<UserPropsWithoutId>){
+    static async read(props?: Partial<Prisma.UserWhereInput>){
         const allUsers = await prisma.user.findMany({ where: props? props : {} })
 
         return allUsers
@@ -27,20 +27,20 @@ export default class UserRepository {
         return user
     }
 
-    static async update(id: string, user: Partial<UserProps>){
+    static async update(props: Prisma.UserWhereUniqueInput, user: Partial<UserProps>){
 
         const updated = await prisma.user.update({
-            where: { id },
+            where: props,
             data: user
         })
 
         return updated
     }
 
-    static async delete(id: string){
+    static async delete(props: Prisma.UserWhereUniqueInput){
 
         const deleted = await prisma.user.delete({
-            where: { id }
+            where: props
         })
         
         return deleted

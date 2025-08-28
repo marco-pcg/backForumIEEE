@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt'
 import type { User } from "../models/User.ts";
 import UserRepository from "../repositories/UserRepository.ts";
-import { Prisma } from '../../generated/prisma/edge.js';
+import { Prisma } from '../../generated/prisma/index.js';
 import CustomValidationError from '../errors/CustomValidationError.ts';
 
 export default class UserService {

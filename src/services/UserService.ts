@@ -86,9 +86,9 @@ export default class UserService {
         return users
     }
 
-    static async readById(id: string){
+    static async readUnique(id: string){
 
-        const user = await UserRepository.readById(id)
+        const user = await UserRepository.readUnique(id)
 
         return user
     }

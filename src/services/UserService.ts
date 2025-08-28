@@ -67,15 +67,13 @@ export default class UserService {
         }catch(err: any){
 
             if(err instanceof Prisma.PrismaClientValidationError){
-                err.message = 'invalid e-mail address or password'
-                throw err
+                throw new CustomValidationError('invalid e-mail address or password')
 
             }else if(err instanceof CustomValidationError){
-
                 throw err
             }
-            throw new Error('error logging in user')
 
+            throw new Error('error logging in user')
         }
 
     }

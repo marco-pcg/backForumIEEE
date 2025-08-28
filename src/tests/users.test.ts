@@ -69,4 +69,69 @@ describe('User Unit Tests Workflow', () => {
         assert.ok(user.password.length > 30)
     })
 
+    it('should not login without e-mail', async () =>{
+
+        const mockedProps: Partial<UserPropsWithoutId> = {
+            email: '',
+            password: '123',
+        }
+
+        try{
+            const user = await UserService.login(mockedProps.email!, mockedProps.password!)
+
+        }catch(err: any){
+
+            assert.strictEqual(err.message, 'email and password are required')
+
+        }
+
+    })
+
+    it('should not login without password', async () =>{
+
+        const mockedProps: Partial<UserPropsWithoutId> = {
+            email: 'a@gmail.com',
+            password: '',
+        }
+
+        try{
+            const user = await UserService.login(mockedProps.email!, mockedProps.password!)
+
+        }catch(err: any){
+
+            assert.strictEqual(err.message, 'email and password are required')
+
+        }
+    })
+
+    it('should not login with wrong e-mail', async () =>{
+
+        const mockedProps: Partial<UserPropsWithoutId> = {
+            email: 'a@gmail.com',
+            password: '123',
+        }
+
+        try{
+            const user = await UserService.login(mockedProps.email!, mockedProps.password!)
+
+        }catch(err: any){
+            assert.strictEqual(err.message, 'invalid e-mail address or password')
+        }
+
+    })
+
+    it('should not login with wrong password', async () =>{
+
+        const mockedProps: Partial<UserPropsWithoutId> = {
+            email: 'abc@gmail.com',
+            password: '1234',
+        }
+
+        try{
+            const user = await UserService.login(mockedProps.email!, mockedProps.password!)
+        }catch(err: any){
+            assert.strictEqual(err.message, 'invalid e-mail address or password')
+        }
+    })
+
 })

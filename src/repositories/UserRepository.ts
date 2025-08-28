@@ -1,3 +1,4 @@
+import type { Prisma } from '../../generated/prisma/index.js'
 import { prisma } from '../db/prisma.ts'
 import type { UserProps, UserPropsWithoutId } from '../models/User.ts'
 
@@ -12,8 +13,8 @@ export default class UserRepository {
         return created
     }
 
-    static async read(){
-        const allUsers = await prisma.user.findMany()
+    static async read(props?: Partial<UserPropsWithoutId>){
+        const allUsers = await prisma.user.findMany({ where: props? props : {} })
 
         return allUsers
     }

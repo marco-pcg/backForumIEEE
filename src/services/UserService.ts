@@ -31,6 +31,12 @@ export default class UserService {
 
         return created
     }
+    private static async hashPassword(password: string){
+        const saltRounds = 12
+        const hashedPassword = await bcrypt.hash(password, saltRounds)
+
+        return hashedPassword
+    }
 
     static async readUsers(){
 

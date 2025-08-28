@@ -134,4 +134,107 @@ describe('User Unit Tests Workflow', () => {
         }
     })
 
+    // delete user
+
+    it('should not delete user with no provided id', async () =>{
+
+        const id = ''
+
+        try{
+            const deleted = await UserService.deleteUser({
+                id
+            })
+
+        }catch(err: Error | any){
+            assert.strictEqual(err.message, 'an id or email must be provided to delete a user')
+        }
+
+
+    })
+
+    it('should not delete user with no provided email', async () =>{
+
+        const email = ''
+
+        try{
+            const deleted = await UserService.deleteUser({
+                email
+            })
+
+        }catch(err: Error | any){
+            assert.strictEqual(err.message, 'an id or email must be provided to delete a user')
+        }
+
+    })
+
+    it('should not delete user with wrong id', async () =>{
+
+        const id = 'asdasdasd'
+
+        try{
+            const deleted = await UserService.deleteUser({
+                id
+            })
+
+        }catch(err: Error | any){
+            assert.strictEqual(err.message, 'no user found')
+        }
+    })
+
+    it('should delete user with correct id', async () =>{
+
+        
+
+        try{
+
+            const created = await UserService.createUser(new User({
+                name: 'abc2',
+                password: '123',
+                username: 'abc2',
+                email: 'abc2@gmail.com',
+                role: 'user'
+            }))
+
+            const deleted = await UserService.deleteUser({
+                id: created.id
+            })
+
+            assert.strictEqual(deleted.email, created.email)
+            
+        }catch(err: Error | any){
+            throw err
+        }
+    })
+
+    it('should not delete user with wrong email', async () =>{
+
+        const email = '123@123.com'
+
+        try{
+            const deleted = await UserService.deleteUser({
+                email
+            })
+
+        }catch(err: Error | any){
+            assert.strictEqual(err.message, 'no user found')
+        }
+    })
+
+    it('should delete user with correct email', async () =>{
+
+        const email = 'abc@gmail.com'
+
+        try{
+
+            const deleted = await UserService.deleteUser({
+                email
+            })
+
+            assert.strictEqual(deleted.email, email)
+
+        }catch(err: Error | any){
+            throw err
+        }
+    })
+
 })

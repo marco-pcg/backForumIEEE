@@ -19,8 +19,8 @@ export default class UserRepository {
         return allUsers
     }
 
-    static async readById(id: string){
-        const user = await prisma.user.findFirst({
+    static async readUnique(id: string){
+        const user = await prisma.user.findUnique({
             where: { id }
         })
 

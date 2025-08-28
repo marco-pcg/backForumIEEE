@@ -54,7 +54,7 @@ describe('User Unit Tests Workflow', () => {
         const mockedProps: UserPropsWithoutId = {
             name: 'abc',
             password: '123',
-            username: 'abc2',
+            username: 'abc',
             email: 'abc@gmail.com',
             role: 'user'
         }

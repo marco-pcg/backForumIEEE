@@ -42,6 +42,10 @@ export default class UserService {
 
     static async login(email: string, password: string){
         
+        if(!email || !password){
+            throw new CustomValidationError('email and password are required')
+        }
+
         try{
 
             const hashedPassword = await this.hashPassword(password)

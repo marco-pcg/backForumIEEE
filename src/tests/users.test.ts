@@ -133,6 +133,26 @@ describe('User Unit Tests Workflow', () => {
             assert.strictEqual(err.message, 'password does not match')
         }
     })
+
+    it('should login with correct e-mail and password', async () => {
+
+        const mockedProps: Partial<UserPropsWithoutId> = {
+            email: 'abc@gmail.com',
+            password: '123',
+        }
+        
+        try{
+
+            const {
+                token
+            } = await UserService.login(mockedProps.email!, mockedProps.password!)
+
+            assert.ok(token.length > 100)
+
+        }catch(err: Error | any){
+            throw new Error(err.message)
+        }
+
     })
 
     // delete user
@@ -183,9 +203,6 @@ describe('User Unit Tests Workflow', () => {
     })
 
     it('should delete user with correct id', async () =>{
-
-        
-
         try{
 
             const created = await UserService.createUser(new User({

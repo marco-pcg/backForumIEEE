@@ -3,6 +3,8 @@ import type { User } from "../models/User.ts";
 import UserRepository from "../repositories/UserRepository.ts";
 import { Prisma } from '../../generated/prisma/index.js';
 import CustomValidationError from '../errors/CustomValidationError.ts';
+import jwt from 'jsonwebtoken'
+await import('dotenv').then(dotenv => dotenv.config())
 
 export default class UserService {
 
@@ -46,18 +48,35 @@ export default class UserService {
             throw new CustomValidationError('email and password are required')
         }
 
+        const SECRET_KEY = process.env.JWT_SECRET || 'default'
+
         try{
 
-            const hashedPassword = await this.hashPassword(password)
-
-            const user = await UserRepository.read({
+            const user = await UserRepository.readUnique({
                 email,
-                password: hashedPassword
             })
 
             if(user){
-                return user
+                
+                if(bcrypt.compareSync(password, user.password)){
+
+                    const token = jwt.sign({
+                            id: user.id!,
+                            email: user.email!,
+                            role: user.role!
+                        }, 
+                        SECRET_KEY, 
+                        { expiresIn: '3h' }
+                    )
+
+                    return { token }
+                }
+
+                throw new CustomValidationError('password does not match')
+                
             }
+
+            throw new CustomValidationError('user not found')
 
         }catch(err: any){
 

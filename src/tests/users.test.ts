@@ -115,7 +115,7 @@ describe('User Unit Tests Workflow', () => {
             const user = await UserService.login(mockedProps.email!, mockedProps.password!)
 
         }catch(err: any){
-            assert.strictEqual(err.message, 'invalid e-mail address or password')
+            assert.strictEqual(err.message, 'user not found')
         }
 
     })
@@ -129,9 +129,10 @@ describe('User Unit Tests Workflow', () => {
 
         try{
             const user = await UserService.login(mockedProps.email!, mockedProps.password!)
-        }catch(err: any){
-            assert.strictEqual(err.message, 'invalid e-mail address or password')
+        }catch(err: Error | any){
+            assert.strictEqual(err.message, 'password does not match')
         }
+    })
     })
 
     // delete user

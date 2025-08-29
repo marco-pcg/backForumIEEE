@@ -153,7 +153,7 @@ export default class UserService {
                 throw err
             }
 
-            throw err
+            throw new Error('user could not be deleted')
         }
     }
 

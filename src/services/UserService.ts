@@ -100,9 +100,9 @@ export default class UserService {
         return users
     }
 
-    static async readUnique(id: string){
+    static async readUnique(props: Prisma.UserWhereUniqueInput){
 
-        const user = await UserRepository.readUnique(id)
+        const user = await UserRepository.readUnique(props)
 
         return user
     }

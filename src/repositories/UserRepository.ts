@@ -19,9 +19,9 @@ export default class UserRepository {
         return allUsers
     }
 
-    static async readUnique(id: string){
+    static async readUnique(props: Prisma.UserWhereUniqueInput){
         const user = await prisma.user.findUnique({
-            where: { id }
+            where: props
         })
 
         return user

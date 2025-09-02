@@ -1,8 +1,8 @@
 import { describe, it } from 'node:test'
 import assert from "assert";
 
-import { User, type UserPropsWithoutId } from '../models/User.ts'
-import UserService from '../services/UserService.ts';
+import { User, type UserPropsWithoutId } from '../../models/User.ts'
+import UserService from '../../services/UserService.ts';
 
 describe('User Unit Tests Workflow', () => {
     

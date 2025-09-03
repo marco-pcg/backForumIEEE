@@ -5,6 +5,7 @@ import express from 'express'
 import cors from 'cors'
 import router from './router.ts'
 import type { Server } from 'http'
+import cookieParser from 'cookie-parser'
 
 const PORT = Number(process.env.PORT) || 3000
 const HOST = process.env.HOST || 'localhost'
@@ -16,6 +17,7 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api', router)
+app.use(cookieParser())
 
 export const listen = (port: number = PORT) => {
     return app.listen(port, () => {

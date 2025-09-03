@@ -3,20 +3,6 @@ import UserService from "../services/UserService.ts"
 
 export default class UserController {
 
-    static register(){
-        throw new Error('not implemented')
-    }
-
-    static login(){
-        throw new Error('not implemented')
-
-    }
-
-    static forgotPassword(){
-        throw new Error('not implemented')
-
-    }
-
     static async findAllUsers(req: Request, res: Response){
         try{
             const users = await UserService.readUsers()

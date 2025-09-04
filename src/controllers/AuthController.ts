@@ -12,7 +12,7 @@ export default class AuthController {
 
     }
 
-    static silentLogin (req: Request, res: Response) {
+    static async silentLogin (req: Request, res: Response) {
 
         const token = req.cookies?.refreshToken
 
@@ -24,7 +24,7 @@ export default class AuthController {
             
             const payload = verifyRefreshToken(token) as { id: string }
 
-            const { accessToken: newAccessToken, refreshToken } = AuthService.silentLogin({ id: payload.id })
+            const { accessToken: newAccessToken, refreshToken } = await AuthService.silentLogin({ id: payload.id })
 
             res.cookie('refresh_token', refreshToken, {
                 httpOnly: true,

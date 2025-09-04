@@ -34,11 +34,31 @@ export default class AuthService {
         return created
     }
 
-    static silentLogin(user: { id: string }) {
-        const accessToken = generateAccessToken({ id: user.id });
-        const refreshToken = generateRefreshToken({ id: user.id });
+    static async silentLogin(user: { id: string }) {
 
-        return { accessToken, refreshToken };
+        
+        try{
+            
+            const userFound = await UserRepository.readUnique({ id: user.id })
+
+            if(userFound){
+                const accessToken = generateAccessToken({ id: user.id });
+                const refreshToken = generateRefreshToken({ id: user.id });
+
+                return { accessToken, refreshToken };
+            }
+
+            throw new CustomValidationError('user not found')
+        }catch(err: Error | any){
+
+            if (err instanceof Prisma.PrismaClientValidationError){
+                throw new CustomValidationError('invalid user id')
+                
+            }else if (err instanceof CustomValidationError){
+                throw err
+            }
+            throw new Error('error during silent login')
+        }
     }
 
 

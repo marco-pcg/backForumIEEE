@@ -163,6 +163,54 @@ describe('User Unit Tests Workflow', () => {
         })
     })
     
+    describe('Silent-Login User', () => {
+
+        it('should not silent-login without user id', async () => {
+
+            try{
+
+                const logged = await AuthService.silentLogin({ })
+            }catch(err: Error | any){
+
+                assert.strictEqual(err.message, 'invalid user id')
+            }
+        })
+
+        it('should not silent-login with wrong user id', async () => {
+
+            try{
+
+                const logged = await AuthService.silentLogin({ id: 'asdasdasd' })
+            } catch(err: Error | any) {
+
+                assert.strictEqual(err.message, 'user not found')
+            }
+
+        })
+
+        it('should silent-login with correct user id', async () => {
+
+            const mockedProps: UserPropsWithoutId = {
+                name: 'abc3',
+                password: '123',
+                username: 'abc3',
+                email: 'abc3@gmail.com',
+                role: 'user'
+            }
+
+            const user = new User(mockedProps)
+            const created = await UserService.createUser(user)
+
+            const logged = await AuthService.silentLogin({ id: created.id })
+
+            assert.ok(logged.accessToken.length > 100)
+            assert.ok(logged.refreshToken.length > 100)
+            assert.notStrictEqual(logged.accessToken, logged.refreshToken)
+        })
+
+
+    })
+
     describe('Delete User', () => {
 
         it('should not delete user with no provided id', async () =>{

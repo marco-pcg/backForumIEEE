@@ -1,5 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
-import { verify } from "jsonwebtoken";
+
+const verify = (await import("jsonwebtoken")).verify
 
 // Extend Express Request interface to include 'user'
 declare global {

@@ -16,9 +16,40 @@ export default class AuthController {
 
     static async register(req: Request, res: Response) {
 
+        const {
+            name,
+            username,
+            email,
+            password,
+        }: User = req.body
+
+        if(!name || !username || !email || !password){
+            return res.status(400).json({ message: 'there is required data missing' })
+        }
+
+        try{
+            const user = await AuthService.register({
+                name,
+                email,
+                username,
+                password
+            })
+
+            res.status(201).json({
+                data: {
+                    id: user.id,
+                    name: user.name,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                }
+            })
+        } catch (err: Error | any){
+            res.status(err instanceof CustomValidationError ? 400 : 500).json({ error: err.message })
+        }
+
     }
 
-    static login(req: Request, res: Response) {
 
     }
 

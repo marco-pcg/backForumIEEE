@@ -15,6 +15,11 @@ export interface UserPropsWithoutId {
     readonly role: string
 }
 
+export interface UserMutableProps {
+    name: string,
+    email: string,
+    password: string,
+    username: string
 }
 
 export class User implements UserPropsWithoutId {

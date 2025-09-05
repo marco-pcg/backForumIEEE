@@ -50,7 +50,37 @@ export default class AuthController {
 
     }
 
+    static async login(req: Request, res: Response) {
 
+        const user = req.body as { email: string, password: string }
+
+        if(!user.password || !user.email){
+            return res.status(400).json({ message: 'there is required data missing' })
+        }
+
+        try {
+
+            const {
+                refreshToken,
+                accessToken,
+                user: userFound
+            } = await AuthService.login(user.email, user.password)
+
+            if(userFound){
+                res.cookie('refresh_token', refreshToken, this.COOKIE_OPTIONS );
+                return res.status(200).json({ accessToken, user: {
+                    id: userFound.id,
+                    name: userFound.name,
+                    username: userFound.username,
+                    email: userFound.email,
+                    role: userFound.role,
+                } })
+            }
+
+            res.status(400).json({ error: 'user not found' })
+        } catch (err: Error | any) {
+            res.status(500).json({ error:err.message })
+        }
     }
 
     static async silentLogin (req: Request, res: Response) {

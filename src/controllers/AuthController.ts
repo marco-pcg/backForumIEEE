@@ -88,7 +88,7 @@ export default class AuthController {
         const token = req.cookies?.refreshToken
 
         if(!token){
-            return res.status(401).json({ message: 'no refresh token' });
+            return res.status(401).json({ error: 'no refresh token' });
         }
 
         try {
@@ -107,7 +107,7 @@ export default class AuthController {
             return res.status(200).json({ accessToken: newAccessToken })
         } catch (err: Error | any) {
 
-            return res.status(403).json({ message: 'invalid or expired token' })
+            return res.status(403).json({ error: 'invalid or expired token' })
         }
 
     }

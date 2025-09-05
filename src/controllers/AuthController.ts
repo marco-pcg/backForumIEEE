@@ -97,12 +97,7 @@ export default class AuthController {
 
             const { accessToken: newAccessToken, refreshToken } = await AuthService.silentLogin({ id: payload.id })
 
-            res.cookie('refresh_token', refreshToken, {
-                httpOnly: true,
-                secure: true,
-                sameSite: 'strict',
-                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
-            });
+            res.cookie('refresh_token', refreshToken, this.COOKIE_OPTIONS );
 
             return res.status(200).json({ accessToken: newAccessToken })
         } catch (err: Error | any) {

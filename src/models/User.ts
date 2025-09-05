@@ -4,7 +4,7 @@ export interface UserProps {
     password: string,
     username: string,
     email: string,
-    role: string
+    readonly role: string
 }
 
 export interface UserPropsWithoutId {
@@ -12,7 +12,9 @@ export interface UserPropsWithoutId {
     password: string,
     username: string,
     email: string,
-    role: string
+    readonly role: string
+}
+
 }
 
 export class User implements UserPropsWithoutId {

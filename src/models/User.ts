@@ -23,12 +23,11 @@ export interface UserMutableProps {
 }
 
 export class User implements UserPropsWithoutId {
-
     name: string;
     password: string;
     username: string;
     email: string;
-    role: string;
+    role: string = "user";
 
     constructor(user: UserPropsWithoutId){
         this.name = user.name

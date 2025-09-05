@@ -1,8 +1,18 @@
-import type { Request, Response } from "express";
+import type { CookieOptions, Request, Response } from "express";
 import { verifyRefreshToken } from "../utils/functions/jwt.ts";
 import AuthService from "../services/AuthService.ts";
+import type { User } from "../models/User.ts";
+import CustomValidationError from "../utils/errors/CustomValidationError.ts";
+import { Prisma } from "../../generated/prisma/index.js";
 
 export default class AuthController {
+
+    static COOKIE_OPTIONS: CookieOptions = {
+        httpOnly: true,
+        secure: true,
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
 
     static async register(req: Request, res: Response) {
 

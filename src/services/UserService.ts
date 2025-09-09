@@ -19,7 +19,7 @@ export default class UserService {
             } = user
     
             if(!name || !email || !password || !username){
-                throw new Error('there is missing information')
+                throw new Error('there is required data missing')
             }
     
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

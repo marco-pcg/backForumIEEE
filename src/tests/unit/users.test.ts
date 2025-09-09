@@ -26,7 +26,7 @@ describe('User Unit Tests Workflow', () => {
 
         }catch(err: any){
 
-            assert.strictEqual(err.message, 'there is missing information')
+            assert.strictEqual(err.message, 'there is required data missing')
         }
 
         })
@@ -206,6 +206,8 @@ describe('User Unit Tests Workflow', () => {
             assert.ok(logged.accessToken.length > 100)
             assert.ok(logged.refreshToken.length > 100)
             assert.notStrictEqual(logged.accessToken, logged.refreshToken)
+
+            await UserService.deleteUser({ id: created.id })
         })
 
 

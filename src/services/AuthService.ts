@@ -18,20 +18,32 @@ export default class AuthService {
         } = user
 
         if(!name || !email || !password || !username){
-            throw new Error('there is missing information')
+            throw new CustomValidationError('there is required data missing')
         }
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            throw new Error('invalid email address');
+            throw new CustomValidationError('invalid email address');
         }
 
-        const hashedPassword = await hashPassword(user.password)
+        try {
 
-        user.password = hashedPassword
-        const created = await UserRepository.create(user)
+            const hashedPassword = await hashPassword(user.password)
 
-        return created
+            user.password = hashedPassword
+            const created = await UserRepository.create(user)
+
+            return created
+        } catch(err: Error | any) {
+
+            if(err instanceof Prisma.PrismaClientValidationError){
+                throw new CustomValidationError('invalid user fied(s)')
+            }else if(err instanceof CustomValidationError){
+                throw err
+            }
+
+            throw new Error('an error ocurred during user registration')
+        }
     }
 
     static async silentLogin(user: { id: string }) {

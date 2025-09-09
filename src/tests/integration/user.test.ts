@@ -8,7 +8,7 @@ const PORT = 3002
 
 const BASE_URL = `http://${HOST}:${PORT}/api`
 
-describe('API - User Workflow', () => {
+describe('API - User', () => {
 
     let _server: Server
 
@@ -34,6 +34,20 @@ describe('API - User Workflow', () => {
 
     })
 
+    it('should not create user with missing fields', async () => {
+
+        const response = await fetch(`${BASE_URL}/auth/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: 'testuser' }) // missing password
+        })
+
+        assert.strictEqual(response.status, 400)
+
+        const error = await response.json()
+        assert.strictEqual(error.message, 'there is required data missing')
+
+    })
 
 
 

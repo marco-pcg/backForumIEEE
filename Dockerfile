@@ -2,9 +2,9 @@ FROM node:lts-alpine
 
 WORKDIR /usr/src/app
 
-COPY package*.json ./
+COPY *lock.json ./
 
-RUN npm install
+RUN yarn
 
 # Copy application code
 COPY . .

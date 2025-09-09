@@ -5,10 +5,11 @@ import CustomValidationError from "../utils/errors/CustomValidationError.ts";
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/functions/jwt.ts";
 import bcrypt from 'bcrypt'
 import { hashPassword } from "../utils/functions/hashPassword.ts";
+import type { UserMutableProps, UserPropsWithoutId } from "../models/User.ts";
 
 export default class AuthService {
 
-    static async register(user: User) {
+    static async register(user: UserMutableProps) {
 
         const {
             name,

@@ -1,39 +1,53 @@
-version: '3.8'
-
 services:
-  mysql:
-    image: mysql:8
-    container_name: mysql_db
+  postgres:
+    image: postgres:latest
+    container_name: agora-postgres
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: docker
-      MYSQL_DATABASE: agora
-      MYSQL_USER: docker
-      MYSQL_PASSWORD: docker
+      POSTGRES_DB: webdev2
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     ports:
-      - "3306:3306"
+      - "5532:5432"
+
+  redis:
+    image: redis:latest
+    container_name: agora-redis
+    ports:
+      - "6479:6379"
+    volumes:
+      - redis_data:/var/data
+    restart: always
 
   node:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: agora_node
+    container_name: agora-node
     restart: always
     environment:
       NODE_ENV: production
-      DB_HOST: mysql
-      DB_PORT: 3306
+      PORT: 3000
+      HOST: localhost
+      DB_HOST: localhost
+      DB_PORT: 5432
       DB_USER: docker
       DB_PASSWORD: docker
-      DB_NAME: agora
+      DB_NAME: webdev2
+      DATABASE_URL: "postgresql://docker:docker@localhost:5432/webdev2?schema=public"
+      SECRET_KEY: supersecretkey
+      ACCESS_TOKEN_SECRET: "anotherbigsecretkey"
+      REFRESH_TOKEN_SECRET: "anotherbigsecretkey"
     ports:
       - "3000:3000"
     depends_on:
-      - mysql
+      - postgres
+      - redis
       
 
 
 volumes:
   postgres_data:
+  redis_data:

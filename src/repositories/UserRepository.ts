@@ -1,10 +1,10 @@
 import type { Prisma } from '../../generated/prisma/index.js'
 import { prisma } from '../db/prisma.ts'
-import type { UserProps, UserPropsWithoutId } from '../models/User.ts'
+import type { UserMutableProps, UserProps, UserPropsWithoutId } from '../models/User.ts'
 
 export default class UserRepository {
 
-    static async create(user: UserPropsWithoutId) {
+    static async create(user: UserMutableProps) {
         
         const created = await prisma.user.create({
             data: user

@@ -1,19 +1,19 @@
-# Use official Node.js image as base
-FROM node:22-alpine
+FROM node:lts-alpine
 
-# Set working directory
-WORKDIR /app
+WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json if present
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install --production
+RUN npm install
 
 # Copy application code
 COPY . .
 
-# Expose port (change if your app uses a different port)
+COPY prisma ./prisma/
+
+RUN npx prisma generate
+RUN npx prisma migrate
+
 EXPOSE 3000
 
 CMD ["node", "src/app.ts"]

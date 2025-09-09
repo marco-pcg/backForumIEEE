@@ -2,12 +2,25 @@ services:
   postgres:
     image: postgres:latest
     container_name: agora-postgres
+  postgres:
+    image: postgres:latest
+    container_name: agora-postgres
     restart: always
     environment:
       POSTGRES_DB: webdev2
       POSTGRES_USER: docker
       POSTGRES_PASSWORD: docker
+      POSTGRES_DB: webdev2
+      POSTGRES_USER: docker
+      POSTGRES_PASSWORD: docker
     volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5532:5432"
+
+  redis:
+    image: redis:latest
+    container_name: agora-redis
       - postgres_data:/var/lib/postgresql/data
     ports:
       - "5532:5432"
@@ -20,11 +33,16 @@ services:
     volumes:
       - redis_data:/var/data
     restart: always
+      - "6479:6379"
+    volumes:
+      - redis_data:/var/data
+    restart: always
 
   node:
     build:
       context: .
       dockerfile: Dockerfile
+    container_name: agora-node
     container_name: agora-node
     restart: always
     environment:
@@ -52,4 +70,5 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
   redis_data:

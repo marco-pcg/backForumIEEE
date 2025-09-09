@@ -16,5 +16,4 @@ COPY . .
 # Expose port (change if your app uses a different port)
 EXPOSE 3000
 
-# Set default command (adjust as needed)
-CMD ["node", "src/server.js"]
+CMD ["node", "src/app.ts"]

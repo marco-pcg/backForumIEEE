@@ -2,10 +2,11 @@ import type { Request, Response } from "express";
 import { Prisma, type User } from "../../generated/prisma/index.js";
 import UserRepository from "../repositories/UserRepository.ts";
 import CustomValidationError from "../utils/errors/CustomValidationError.ts";
-import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from "../utils/functions/jwt.ts";
+import { generateAccessToken, generateRefreshToken, sendRefreshToken, verifyRefreshToken } from "../utils/functions/jwt.ts";
 import bcrypt from 'bcrypt'
 import { hashPassword } from "../utils/functions/hashPassword.ts";
 import type { UserMutableProps, UserPropsWithoutId } from "../models/User.ts";
+import UserService from "./UserService.ts";
 
 export default class AuthService {
 
@@ -110,4 +111,18 @@ export default class AuthService {
         }
 
     }
+
+    static async refreshToken(user: {
+            id: string
+        },
+        res: Response
+    ){
+        const accessToken = generateAccessToken({ id: user!.id })
+        const refreshToken = await generateRefreshToken({ id: user!.id })
+
+        sendRefreshToken(res, refreshToken)
+
+        return accessToken
+    }
+
 }

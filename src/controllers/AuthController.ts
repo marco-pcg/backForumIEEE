@@ -4,6 +4,7 @@ import AuthService from "../services/AuthService.ts";
 import type { User } from "../models/User.ts";
 import CustomValidationError from "../utils/errors/CustomValidationError.ts";
 import { Prisma } from "../../generated/prisma/index.js";
+import UserService from "../services/UserService.ts";
 
 export default class AuthController {
 
@@ -107,8 +108,60 @@ export default class AuthController {
 
     }
 
+    static async refreshToken(req: Request, res: Response) {
+
+        const { email, password } = req.body
+
+        try {    
+            const user = await UserService.readUnique({
+                email: email, 
+                password: password
+            })
+
+            if(!user) throw new CustomValidationError('no user found')
+
+            const accessToken = await AuthService.refreshToken({ id: user!.id }, res)
+            
+            res.status(200).json({
+                accessToken,
+                user: user.id
+            })
+        } catch (error: Error | any) {
+            
+            res.status(500).json({
+                error: error.message
+            })
+        }
+    }
+
+    static async me(req: Request, res: Response){
+
+        const { id } = req.body
+
+        try {
+
+            if(!id) throw new CustomValidationError('missing required data')
+            const user = await UserService.readUnique({ id })            
+
+            if(!user) throw new CustomValidationError('no user found')
+                
+            res.status(200).json({
+                id: user.id,
+                name: user.name,
+                username: user.username,
+                email: user.email,
+                role: user.role
+            })
+        } catch(error: Error | any){
+            
+            res.status(500).json({
+                error: error.message
+            })
+        }
+    }
+
     static logout (req: Request, res: Response) {
         res.clearCookie('refresh_token');
-        res.status(200).json({ message: 'Logged out' });
+        res.status(200).json({ message: 'logged out' });
     }
 }

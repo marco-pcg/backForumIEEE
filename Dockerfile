@@ -16,4 +16,4 @@ RUN npx prisma migrate
 
 EXPOSE 3000
 
-CMD ["node", "src/app.ts"]
+CMD ["node", "--watch","src/app.ts"]

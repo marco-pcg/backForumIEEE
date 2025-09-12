@@ -11,5 +11,6 @@ router.post('/register', AuthController.register)
 
 router.post('/refresh', AuthController.refreshToken)
 
+router.post('/me', AuthController.me)
 
 export default router

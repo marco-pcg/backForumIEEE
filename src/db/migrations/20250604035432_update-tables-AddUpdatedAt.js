@@ -30,21 +30,4 @@ exports.up = function(knex) {
  */
 exports.down = function(knex) {
 
-    const tables = [
-        "questions_likes",
-        "questions",
-        "replies_likes",
-        "replies",
-        "users",
-        "categories"
-    ];
-
-    return Promise.all(
-        tables.map((tableName) =>
-            knex.schema.alterTable(tableName, (table) => {
-                table.timestamp("updated_at")
-                    .defaultTo(knex.fn.now())
-            })
-        )
-    );
 };

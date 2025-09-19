@@ -3,12 +3,7 @@ const jwt = require('jsonwebtoken')
 const User = require('../models/User.js')
 
 const router = require('express').Router()
-
-const generateTokens = user => {
-    const accessToken = jwt.sign({user}, process.env.JWT_ACCESS_SECRET, { expiresIn: '30m' })
-    const refreshToken = jwt.sign({user}, process.env.JWT_REFRESH_SECRET, { expiresIn: '7d' })
-    return { accessToken, refreshToken }
-}
+const { generateTokens, generateAccessToken, requireRefreshToken, authenticate } = require('../middleware/auth.js')
 
 // Register route
 
@@ -82,30 +77,29 @@ router.post('/login', async (req, res) => {
 
 })
 
-router.post('/refresh', (req, res) => {
-    const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).send('Missing refresh token');
+router.post('/refresh', requireRefreshToken, (req, res) => {
 
     try {
-
+        const token = req.token
         const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET)
 
-        const tokens = generateTokens({ user: payload.user });
-        res.cookie('refreshToken', tokens.refreshToken, {
-        httpOnly: true,
-        sameSite: 'Lax',
-        secure: false,
-        });
+        const accessToken = generateAccessToken({ user: payload.user });
         
-        res.json({ accessToken: tokens.accessToken, user: payload.user });
+        res.json({ accessToken, user: payload.user });
     } catch (err) {
-        res.status(401).send('Invalid token', err);
+        res.status(500).send('Invalid token', err);
     }
 })
 
 router.post('/logout', (req, res) => {
     res.clearCookie('refreshToken')
     res.sendStatus(200)
+})
+
+router.get('/protected/me', requireRefreshToken, authenticate, (req, res) => {
+    const user = req.user.user
+
+    res.json({ user })
 })
 
 module.exports = router

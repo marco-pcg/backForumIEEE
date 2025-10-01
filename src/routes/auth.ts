@@ -1,16 +1,15 @@
 import { Router } from "express";
 import AuthController from "../controllers/AuthController.ts";
+import { authenticate, requireRefreshToken } from "../utils/middlewares/auth.ts";
 
 const router = Router()
-
-router.post('/silent-login', AuthController.silentLogin)
 
 router.post('/login', AuthController.login)
 
 router.post('/register', AuthController.register)
 
-router.post('/refresh', AuthController.refreshToken)
+router.post('/refresh', requireRefreshToken, AuthController.refreshToken)
 
-router.post('/me', AuthController.me)
+router.post('/logout', AuthController.logout)
 
 export default router

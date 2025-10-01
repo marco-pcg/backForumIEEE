@@ -1,17 +1,18 @@
 import type { CookieOptions, Request, Response } from "express";
-import { verifyRefreshToken } from "../utils/functions/jwt.ts";
 import AuthService from "../services/AuthService.ts";
 import type { User } from "../models/User.ts";
 import CustomValidationError from "../utils/errors/CustomValidationError.ts";
 import { Prisma } from "../../generated/prisma/index.js";
 import UserService from "../services/UserService.ts";
+import { generateAccessToken, generateTokens } from "../utils/functions/jwt.ts";
+import jwt from 'jsonwebtoken'
 
 export default class AuthController {
 
     static COOKIE_OPTIONS: CookieOptions = {
         httpOnly: true,
-        secure: true,
-        sameSite: 'strict',
+        secure: false,
+        sameSite: 'lax',
         maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     };
 
@@ -36,14 +37,13 @@ export default class AuthController {
                 password
             })
 
+            const tokens = generateTokens(user)
+
+            res.cookie('refreshToken', tokens.refreshToken, this.COOKIE_OPTIONS)
+
             res.status(201).json({
-                data: {
-                    id: user.id,
-                    name: user.name,
-                    username: user.username,
-                    email: user.email,
-                    role: user.role,
-                }
+                user,
+                accessToken: tokens.accessToken
             })
         } catch (err: Error | any){
             res.status(err instanceof CustomValidationError ? 400 : 500).json({ error: err.message })
@@ -60,22 +60,14 @@ export default class AuthController {
         }
 
         try {
-
-            const {
-                refreshToken,
-                accessToken,
-                user: userFound
-            } = await AuthService.login(user.email, user.password)
-
+            const userFound = await AuthService.login(user.email, user.password)
+                        
             if(userFound){
-                res.cookie('refresh_token', refreshToken, this.COOKIE_OPTIONS );
-                return res.status(200).json({ accessToken, user: {
-                    id: userFound.id,
-                    name: userFound.name,
-                    username: userFound.username,
-                    email: userFound.email,
-                    role: userFound.role,
-                } })
+                const tokens = generateTokens(userFound)
+                res.cookie('refreshToken', tokens.refreshToken, this.COOKIE_OPTIONS)
+
+                res.cookie('refresh_token', tokens.refreshToken, this.COOKIE_OPTIONS );
+                return res.status(200).json({ accessToken: tokens.accessToken, user: userFound })
             }
 
             res.status(400).json({ error: 'user not found' })
@@ -84,84 +76,21 @@ export default class AuthController {
         }
     }
 
-    static async silentLogin (req: Request, res: Response) {
-
-        const token = req.cookies?.refreshToken
-
-        if(!token){
-            return res.status(401).json({ error: 'no refresh token' });
-        }
-
-        try {
-            
-            const payload = verifyRefreshToken(token) as { id: string }
-
-            const { accessToken: newAccessToken, refreshToken } = await AuthService.silentLogin({ id: payload.id })
-
-            res.cookie('refresh_token', refreshToken, this.COOKIE_OPTIONS );
-
-            return res.status(200).json({ accessToken: newAccessToken })
-        } catch (err: Error | any) {
-
-            return res.status(403).json({ error: 'invalid or expired token' })
-        }
-
-    }
-
     static async refreshToken(req: Request, res: Response) {
+       try {
+        const token = (req as any).token
+        const payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET || '')
 
-        const { email, password } = req.body
-
-        try {    
-            const user = await UserService.readUnique({
-                email: email, 
-                password: password
-            })
-
-            if(!user) throw new CustomValidationError('no user found')
-
-            const accessToken = await AuthService.refreshToken({ id: user!.id }, res)
-            
-            res.status(200).json({
-                accessToken,
-                user: user.id
-            })
-        } catch (error: Error | any) {
-            
-            res.status(500).json({
-                error: error.message
-            })
-        }
+        const accessToken = generateAccessToken((payload as any).user);
+        
+        res.json({ accessToken, user: (payload as any).user });
+    } catch (err: Error | any) {
+        res.status(500).send('invalid token'+ err.message);
     }
-
-    static async me(req: Request, res: Response){
-
-        const { id } = req.body
-
-        try {
-
-            if(!id) throw new CustomValidationError('missing required data')
-            const user = await UserService.readUnique({ id })            
-
-            if(!user) throw new CustomValidationError('no user found')
-                
-            res.status(200).json({
-                id: user.id,
-                name: user.name,
-                username: user.username,
-                email: user.email,
-                role: user.role
-            })
-        } catch(error: Error | any){
-            
-            res.status(500).json({
-                error: error.message
-            })
-        }
     }
 
     static logout (req: Request, res: Response) {
-        res.clearCookie('refresh_token');
-        res.status(200).json({ message: 'logged out' });
+        res.clearCookie('refreshToken')
+        res.sendStatus(200)
     }
 }

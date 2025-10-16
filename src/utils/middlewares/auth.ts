@@ -15,32 +15,32 @@ declare global {
 }
 
 export const authenticate = (req: Request, res: Response, next: NextFunction) => {
-
     const authHeader = req.headers.authorization
     const token = authHeader && authHeader.split(' ')[1]
 
     if (!token) 
-        return res.status(401).json({ message: 'No access token provided' })
+        return res.status(401).json({ message: 'no access token provided' })
     
     try{
         const user = jwt.verify(token, ACCESS_TOKEN_SECRET)
         req.user = user
         next()
     }catch {
-        return res.status(403).json({ message: 'Invalid token' })
+        return res.status(403).json({ message: 'invalid token' })
     }
 }
 
 export const requireRole = (role: string) => (req: Request, res: Response, next: NextFunction) => {
     if (req.user.role !== role) {
-        return res.status(403).json({ message: 'Forbidden' })
+        return res.status(403).json({ message: 'forbidden' })
     }
     next()
 }
 
 export const requireRefreshToken = (req: Request, res: Response, next: NextFunction) => {
     const token = req.cookies.refreshToken;
-    if (!token) return res.status(401).json({ message: 'Missing refresh token'});
+    
+    if (!token) return res.status(401).json({ message: 'missing refresh token'});
     req.token = token;
     next()
 }

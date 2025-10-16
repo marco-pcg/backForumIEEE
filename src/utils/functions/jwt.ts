@@ -6,7 +6,6 @@ import type { User } from '../../models/User.ts';
 
 export const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || ''
 export const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || ''
-const REFRESH_TOKEN_EXPIRES = Number(process.env.REFRESH_TOKEN_EXPIRES) || 60 * 60 * 24 * 7 // 7 days
 
 if (!ACCESS_TOKEN_SECRET || !REFRESH_TOKEN_SECRET) {
     throw new Error('JWT secrets are not defined in environment variables');

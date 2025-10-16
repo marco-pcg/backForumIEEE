@@ -19,13 +19,11 @@ services:
       - "6479:6379"
     volumes:
       - redis_data:/var/data
-    restart: always
   node:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: agora-node
-    restart: always
     environment:
       NODE_ENV: production
       PORT: 3000

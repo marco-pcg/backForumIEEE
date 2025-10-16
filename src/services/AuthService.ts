@@ -11,7 +11,6 @@ import UserService from "./UserService.ts";
 export default class AuthService {
 
     static async register(user: UserMutableProps) {
-
         const {
             name,
             email,
@@ -27,7 +26,6 @@ export default class AuthService {
         if (!emailRegex.test(email)) {
             throw new CustomValidationError('invalid email address');
         }
-
         try {
 
             const hashedPassword = await hashPassword(user.password)
@@ -44,7 +42,6 @@ export default class AuthService {
             }else if(err instanceof CustomValidationError){
                 throw err
             }
-
             throw new Error('an error ocurred during user registration')
         }
     }
@@ -53,7 +50,6 @@ export default class AuthService {
         if(!email || !password){
             throw new CustomValidationError('email and password are required')
         }
-
         try{
             const user = await UserRepository.readUnique({
                 email,

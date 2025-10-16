@@ -10,15 +10,12 @@ export default class UserController {
             if(users){
                 return res.status(200).json(users)
             }
-
-            
+           
             return res.status(200).json([])
-
         }catch(err: any){
             return res.status(500).json({ error: err.message })
         }
     }
-
 
     static findUserById(){
         throw new Error('not implemented')
